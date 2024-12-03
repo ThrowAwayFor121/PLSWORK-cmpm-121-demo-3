@@ -44,7 +44,7 @@ class Cache implements Memento<string> {
 
 const zoomAmount = 19;
 const origin = [36.989498, -122.062777];
-let playerLocation = origin;
+let playerLocation = [origin[0], origin[1]];
 const savedLocation = localStorage.getItem("playerLocation");
 if (savedLocation) {
   playerLocation = JSON.parse(savedLocation);
@@ -71,6 +71,12 @@ let cacheLayer = leaflet.layerGroup().addTo(map);
 const playerMarker = leaflet.marker(playerLocation).addTo(map);
 playerMarker.bindTooltip("You are Here");
 
+let path: leaflet.latlng = [[...playerLocation]];
+const savedPath = localStorage.getItem("savedPath");
+if (savedPath) {
+  path = JSON.parse(savedPath);
+}
+let polyline = leaflet.polyline(path, { color: "red" }).addTo(map);
 function playerController(dir: string, lat: number, lon: number) {
   const button = document.querySelector<HTMLDivElement>(dir)!;
   button.addEventListener("click", () => {
@@ -134,12 +140,18 @@ function cacheUpdate(add: Array<Coin>, remove: Array<Coin>) {
     localStorage.setItem("playerCoin", JSON.stringify(playerCoins));
   }
 }
+
 function resetMap() {
+  path.push([...playerLocation]);
+  localStorage.setItem("savedPath", JSON.stringify(path));
+  polyline.setLatLngs(path);
+  map.panTo(playerLocation);
   playerMarker.setLatLng(playerLocation);
   map.removeLayer(cacheLayer);
   coinCache.clear();
   populateNeighborhood();
 }
+
 function spawnCache(y: number, x: number) {
   // create cache area
   const bounds = leaflet.latLngBounds(
@@ -209,8 +221,26 @@ reset.addEventListener("click", () => {
   localStorage.clear();
   playerCoins = [];
   status.innerHTML = `You have 0 coin(s)`;
-  playerLocation = origin;
+  playerLocation = [origin[0], origin[1]];
+  resetMap();
+  polyline.removeFrom(map);
+  path = [[...playerLocation]];
+  polyline = leaflet.polyline(path, { color: "red" }).addTo(map);
+});
+const sensor = document.querySelector<HTMLDivElement>("#sensor")!;
+sensor.addEventListener("click", () => {
+  if (sensor.classList.contains("locating")) {
+    sensor.classList.remove("locating");
+    map.stopLocate();
+  } else {
+    sensor.classList.add("locating");
+    map.locate({ watch: true });
+  }
+});
+map.on("locationfound", function (e: { latlng: { lat: number; lng: number } }) {
+  playerLocation = [e.latlng.lat, e.latlng.lng];
   resetMap();
 });
+
 // call functions
 populateNeighborhood();
