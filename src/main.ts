@@ -1,5 +1,5 @@
 import leaflet from "leaflet";
-// Style sheets
+// Style sheets.
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 // Fix missing marker images
