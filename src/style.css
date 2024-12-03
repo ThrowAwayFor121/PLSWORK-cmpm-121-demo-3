@@ -28,12 +28,12 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  padding: 10px;
 }
 
 h1 {
   font-size: 3.2em;
-  line-height: 1;
+  line-height: 1.1;
+  padding: 10px;
 }
 
 #controlPanel {
@@ -70,9 +70,7 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-.locating {
-  background-color: #b3e4ec;
-}
+
 #map-container {
   border-radius: 8px;
   outline: 15px solid rgb(102, 81, 81);
@@ -80,11 +78,9 @@ button:focus-visible {
   height: 600px; /* Set height a bit larger than the map */
   display: inline-block;
   filter: drop-shadow(1px 5px 5px black);
-  position: relative;
-  top: 25px;
+  position: absolute;
   left: 25px;
 }
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
