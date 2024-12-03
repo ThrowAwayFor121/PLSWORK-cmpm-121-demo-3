@@ -17,6 +17,7 @@ const status = document.querySelector<HTMLDivElement>("#statusPanel")!;
 status.innerHTML = `You have ${playerCoins.length} coin(s)`;
 
 //map info
+
 interface Coin {
   serial: string;
 }
@@ -24,6 +25,7 @@ interface Cache {
   coordinates: Array<number>;
   coins: Array<Coin>;
 }
+
 const zoomAmount = 19;
 const playerLocation = [36.989498, -122.062777];
 const tileSize = 1e-4;
@@ -53,6 +55,7 @@ function getKey(lat: number, lon: number) {
   const j = Math.floor(lon * 100000);
   return `${i}:${j}`;
 }
+
 function getCell(lat: number, lon: number): Cache {
   const key = getKey(lat, lon);
   let cache = coinCache.get(key);
@@ -64,6 +67,7 @@ function getCell(lat: number, lon: number): Cache {
     cache = { coordinates: [lat, lon], coins: coins };
     coinCache.set(key, cache);
   }
+
   return cache;
 }
 
@@ -87,7 +91,8 @@ function spawnCache(y: number, x: number) {
 
   // cache popup
   rect.bindPopup(() => {
-    const coinAmount = getCell(y, x)!.coins;
+    const coinAmount = getCell(y, x).coins;
+
     const popup = document.createElement("div");
     popup.innerHTML = `
           <div>There are <span id="coin">${coinAmount.length}</span> coin(s) here!</div>
